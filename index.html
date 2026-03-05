@@ -3,55 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ท่าฉาง Library - สะสมแต้มอ่านหนังสือ</title>
+    <title>ท่าฉาง Library - เกมและความรู้</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
-        body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #fdf2f8 0%, #f5f3ff 100%); }
-        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        body { font-family: 'Prompt', sans-serif; background: #fff1f2; }
+        .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border: 1px solid #fee2e2; }
+        .hidden { display: none; }
     </style>
 </head>
 <body class="text-gray-800 min-h-screen">
 
     <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
-        <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
-            <h1 class="text-4xl font-bold text-purple-700 mb-2">📚 ท่าฉาง Library</h1>
-            <p class="text-pink-500 mb-8">อ่านหนังสือวันนี้ เพื่อแต้มในวันหน้า</p>
-            <input type="email" id="email" placeholder="อีเมล" class="w-full mb-4 p-4 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-purple-400 outline-none">
-            <input type="password" id="password" placeholder="รหัสผ่าน" class="w-full mb-6 p-4 rounded-2xl border border-purple-100 focus:ring-2 focus:ring-purple-400 outline-none">
-            <button onclick="handleLogin()" class="w-full bg-purple-600 text-white font-bold py-4 rounded-2xl mb-3 shadow-lg hover:bg-purple-700 transition-all">เข้าสู่ระบบ</button>
-            <button onclick="handleRegister()" class="w-full border-2 border-purple-600 text-purple-600 font-bold py-4 rounded-2xl hover:bg-purple-50 transition-all">สมัครสมาชิกใหม่</button>
-            <p id="auth-msg" class="text-red-500 text-sm mt-4"></p>
+        <div class="glass p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md text-center border-b-8 border-purple-600">
+            <h1 class="text-4xl font-bold text-purple-700 mb-2">📚 ท่าฉาง App</h1>
+            <p class="text-gray-500 mb-8">อ่าน เรียนรู้ และเล่นเกมสะสมแต้ม</p>
+            <input type="email" id="email" placeholder="อีเมลของคุณ" class="w-full mb-4 p-4 rounded-2xl border-none bg-gray-100 outline-none focus:ring-2 focus:ring-purple-400">
+            <input type="password" id="password" placeholder="รหัสผ่าน" class="w-full mb-6 p-4 rounded-2xl border-none bg-gray-100 outline-none focus:ring-2 focus:ring-purple-400">
+            <button onclick="handleLogin()" class="w-full bg-purple-600 text-white font-bold py-4 rounded-2xl mb-3 shadow-lg transform active:scale-95 transition">เข้าสู่ระบบ</button>
+            <button onclick="handleRegister()" class="w-full text-purple-600 font-bold py-2">สมัครสมาชิกใหม่</button>
         </div>
     </div>
 
     <div id="main-screen" class="hidden">
-        <nav class="glass sticky top-0 z-50 p-4 shadow-sm flex justify-between items-center px-6">
-            <h2 class="font-bold text-purple-700 text-xl">📖 ท่าฉาง App</h2>
+        <nav class="glass sticky top-0 z-50 p-4 shadow-md flex justify-between items-center px-8">
+            <h2 class="font-bold text-purple-700 text-xl">Thachang Library</h2>
             <div class="flex items-center gap-4">
-                <div id="points-display" class="bg-yellow-400 text-white px-5 py-1.5 rounded-full font-bold shadow-md">🪙 0 แต้ม</div>
-                <button onclick="auth.signOut()" class="text-gray-400 hover:text-red-500 transition-colors">ทางออก</button>
+                <div id="points-display" class="bg-yellow-400 text-white px-6 py-2 rounded-full font-bold shadow-sm">🪙 0 แต้ม</div>
+                <button onclick="auth.signOut()" class="text-red-500 font-bold bg-red-50 px-3 py-1 rounded-lg">ออก</button>
             </div>
         </nav>
+        
+        <main class="max-w-5xl mx-auto p-6">
+            <div class="bg-gradient-to-br from-purple-700 to-pink-600 rounded-[2.5rem] p-10 mb-10 text-white shadow-2xl relative overflow-hidden">
+                <h1 class="text-4xl font-bold mb-3 relative z-10">วิถีชาวท่าฉาง 🌾</h1>
+                <p class="text-lg opacity-90 relative z-10">มาร่วมสนุกกับเกมตอบคำถาม 10 ข้อ เพื่อรับ 50 แต้ม!</p>
+                <div class="absolute -right-10 -bottom-10 text-9xl opacity-20 rotate-12">📖</div>
+            </div>
 
-        <main class="max-w-4xl mx-auto p-6">
-            <section class="mb-10">
-                <h2 class="text-2xl font-bold text-purple-800 mb-6 flex items-center gap-2">🔥 หนังสือมาแรง</h2>
-                <div id="book-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
-            </section>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="glass p-8 rounded-[2rem] shadow-xl border-t-8 border-yellow-400">
+                    <div class="text-6xl mb-4">🎮</div>
+                    <h3 class="text-2xl font-bold mb-2">เกมแฟนพันธุ์แท้</h3>
+                    <p class="text-gray-500 mb-6 text-lg">ตอบถูกครบ 10 ข้อ รับทันที 50 แต้ม</p>
+                    <button onclick="startQuiz()" class="w-full bg-yellow-400 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-yellow-500 transition">เริ่มเล่นเกม</button>
+                </div>
 
-            <section>
-                <h2 class="text-2xl font-bold text-purple-800 mb-6 flex items-center gap-2">🎁 แลกของรางวัล</h2>
-                <div id="reward-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
-            </section>
+                <div class="glass p-8 rounded-[2rem] shadow-xl border-t-8 border-purple-500">
+                    <div class="text-6xl mb-4">📜</div>
+                    <h3 class="text-2xl font-bold mb-2">ข้อมูลท่าฉาง 100%</h3>
+                    <p class="text-gray-500 mb-6 text-lg">ประวัติและวิถีชาวบ้านที่คุณควรรู้</p>
+                    <button onclick="openInfo()" class="w-full bg-purple-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-purple-700 transition">เปิดอ่านข้อมูล</button>
+                </div>
+            </div>
         </main>
     </div>
 
+    <div id="quiz-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass w-full max-w-lg p-10 rounded-[3rem] shadow-2xl relative text-center">
+            <div id="quiz-step">
+                <p id="q-number" class="text-purple-600 font-bold mb-2 text-xl">คำถามที่ 1/10</p>
+                <h2 id="q-text" class="text-2xl font-bold text-gray-800 mb-10 leading-snug">กำลังโหลดคำถาม...</h2>
+                <div id="q-options" class="grid grid-cols-1 gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="info-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80">
+        <div class="glass w-full max-w-3xl max-h-[85vh] overflow-y-auto p-10 rounded-[3rem] shadow-2xl relative">
+            <button onclick="closeInfo()" class="absolute top-6 right-8 text-4xl text-gray-400 hover:text-red-500">&times;</button>
+            <h2 class="text-3xl font-bold text-purple-800 mb-8 border-b-2 border-purple-100 pb-4">วิถีชีวิตและข้อมูลท่าฉาง</h2>
+            <div class="space-y-8 text-gray-700 text-lg leading-relaxed">
+                <div>
+                    <h3 class="font-bold text-xl text-purple-600 mb-3 underline">🏙️ ที่มาและความสำคัญ</h3>
+                    <p>อำเภอท่าฉาง มีประวัติศาสตร์อันยาวนานตั้งแต่สมัยกรุงรัตนโกสินทร์ตอนต้น ชื่อว่า <b>"ท่าฉาง"</b> มาจากความสำคัญทางยุทธศาสตร์ในอดีตที่เป็นที่ตั้งของ <b>"ฉางข้าวหลวง"</b> เพื่อเก็บรวบรวมส่วยข้าวจากเมืองต่างๆ ส่งเข้าสู่พระนครริมแม่น้ำพุมดวง</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xl text-purple-600 mb-3 underline">🦐 วิถีชาวบ้านและภูมิปัญญา</h3>
+                    <p>ชาวท่าฉางมีวิถีชีวิตผูกพันกับ "น้ำกร่อย" บริเวณปากแม่น้ำ อาชีพที่โดดเด่นคือการทำประมงพื้นบ้านและการทำ <b>"กะปิท่าฉาง"</b> ซึ่งเป็นภูมิปัญญาที่ส่งต่อมานับร้อยปี โดยใช้ "ตัวเคย" สดๆ มาหมักกับเกลือสมุทรจนได้รสชาติที่กลมกล่อมและหอมเป็นเอกลักษณ์</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xl text-purple-600 mb-3 underline">🛕 ศูนย์รวมจิตใจ</h3>
+                    <p>วัดเขาพระ เป็นสถานที่ศักดิ์สิทธิ์ที่ชาวท่าฉางเคารพนับถือมาช้านาน เป็นสัญลักษณ์ของความศรัทธาและความสามัคคีของคนในชุมชนที่ยังคงรักษาประเพณีทางศาสนาไว้อย่างเข้มแข็งจนถึงปัจจุบัน</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 1. Firebase Config (ใช้ตัวเดิมของคุณที่ตั้งค่าไว้แล้ว)
         const firebaseConfig = {
             apiKey: "AIzaSyAR2-lI9YULz5J0OZNBcKk_oJYtJANX8XA",
             authDomain: "thachang-library.firebaseapp.com",
@@ -66,100 +108,90 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
-        const BOOKS = [
-            { id: 'b1', title: 'ประวัติศาสตร์ท่าฉาง', icon: '🏛️', pts: 10, desc: 'เปิดตำนานเมืองท่าฉาง' },
-            { id: 'b2', title: 'กะปิท่าฉางสูตรลับ', icon: '🦐', pts: 10, desc: 'หอม อร่อย ของดีบ้านเรา' }
+        const QUESTIONS = [
+            { q: "ชื่ออำเภอท่าฉาง มาจากคำว่าอะไร?", a: ["ท่าเรือและฉางข้าวหลวง", "ท่าเรือจอดรถไถ"], correct: 0 },
+            { q: "กะปิท่าฉางทำมาจากสัตว์ชนิดใดเป็นหลัก?", a: ["ปลาทู", "ตัวเคย (กุ้งจิ๋ว)"], correct: 1 },
+            { q: "แม่น้ำสายหลักของท่าฉางชื่อว่าอะไร?", a: ["แม่น้ำพุมดวง", "แม่น้ำตาปี"], correct: 0 },
+            { q: "วัดที่ตั้งบนเขาสูงและศักดิ์สิทธิ์คือวัดอะไร?", a: ["วัดเขาพระ", "วัดพระบรมธาตุ"], correct: 0 },
+            { q: "อาชีพหลักของชาวท่าฉางในอดีตคืออะไร?", a: ["ทำนาและประมง", "ทำโรงงานเหล็ก"], correct: 0 },
+            { q: "ฉางข้าวหลวงในอดีตใช้เก็บอะไร?", a: ["เก็บข้าวส่วยอากร", "เก็บน้ำดื่ม"], correct: 0 },
+            { q: "ทำไมกะปิท่าฉางถึงมีรสชาติดี?", a: ["เพราะใส่สีผสมอาหาร", "เพราะใช้เคยสดริมน้ำกร่อย"], correct: 1 },
+            { q: "ท่าฉางตั้งอยู่ในจังหวัดใด?", a: ["สุราษฎร์ธานี", "นครศรีธรรมราช"], correct: 0 },
+            { q: "ลักษณะภูมิประเทศเด่นของท่าฉางคืออะไร?", a: ["มีภูเขาสูงชันทุกที่", "เป็นที่ราบลุ่มและปากแม่น้ำ"], correct: 1 },
+            { q: "หัวใจของการมาห้องสมุดท่าฉางคืออะไร?", a: ["มาแอบนอนหลับ", "มาเรียนรู้ประวัติศาสตร์ท้องถิ่น"], correct: 1 }
         ];
 
-        const REWARDS = [
-            { id: 'r1', title: 'เกียรติบัตรนักอ่าน', cost: 50, icon: '📜' },
-            { id: 'r2', title: 'สมุดบันทึกท่าฉาง', cost: 100, icon: '📓' }
-        ];
+        let currentQ = 0;
+        let score = 0;
 
-        // 2. ระบบตรวจสอบสถานะ
         auth.onAuthStateChanged(user => {
-            const loginScr = document.getElementById('login-screen');
-            const mainScr = document.getElementById('main-screen');
             if (user) {
-                loginScr.classList.add('hidden');
-                mainScr.classList.remove('hidden');
-                syncUserData(user.uid);
-                renderApp();
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-screen').classList.remove('hidden');
+                syncPoints(user.uid);
             } else {
-                loginScr.classList.remove('hidden');
-                mainScr.classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('main-screen').classList.add('hidden');
             }
         });
 
-        // 3. ซิงค์ข้อมูลแต้ม Realtime
-        function syncUserData(uid) {
-            db.ref('users/' + uid).on('value', (snapshot) => {
-                const data = snapshot.val();
-                window.userPoints = data ? (data.points || 0) : 0;
-                document.getElementById('points-display').innerText = `🪙 ${window.userPoints} แต้ม`;
+        function syncPoints(uid) {
+            db.ref('users/' + uid).on('value', s => {
+                document.getElementById('points-display').innerText = `🪙 ${s.val()?.points || 0} แต้ม`;
             });
         }
 
-        // 4. ฟังก์ชันอ่านและแลก
-        function updatePoints(amount, message) {
-            const user = auth.currentUser;
-            if (user) {
-                const pointsRef = db.ref('users/' + user.uid + '/points');
-                pointsRef.transaction((cp) => (cp || 0) + amount, (error, committed) => {
-                    if (committed) alert(message);
-                });
-            }
+        function startQuiz() {
+            currentQ = 0; score = 0;
+            document.getElementById('quiz-modal').classList.remove('hidden');
+            showQ();
         }
 
-        function claimReward(cost, title) {
-            if (window.userPoints >= cost) {
-                updatePoints(-cost, `🎉 คุณแลก ${title} สำเร็จ!`);
+        function showQ() {
+            const q = QUESTIONS[currentQ];
+            document.getElementById('q-number').innerText = `คำถามที่ ${currentQ + 1}/10`;
+            document.getElementById('q-text').innerText = q.q;
+            document.getElementById('q-options').innerHTML = q.a.map((opt, i) => `
+                <button onclick="ans(${i})" class="w-full bg-purple-50 text-purple-800 py-4 rounded-2xl border-2 border-purple-100 font-bold hover:bg-purple-600 hover:text-white transition">
+                    ${opt}
+                </button>
+            `).join('');
+        }
+
+        function ans(i) {
+            if (i === QUESTIONS[currentQ].correct) score++;
+            currentQ++;
+            if (currentQ < QUESTIONS.length) showQ();
+            else finish();
+        }
+
+        function finish() {
+            if (score === 10) {
+                db.ref('users/' + auth.currentUser.uid + '/points').transaction(c => (c || 0) + 50);
+                alert("🎊 สุดยอด! คุณคือแฟนพันธุ์แท้ท่าฉาง รับไปเลย 50 แต้ม");
             } else {
-                alert("❌ แต้มไม่พอจ้า สะสมเพิ่มอีกนิดนะ!");
+                alert(`คุณตอบถูก ${score} ข้อ ลองใหม่อีกครั้งให้ครบ 10 ข้อเพื่อรับแต้มนะ!`);
             }
+            document.getElementById('quiz-modal').classList.add('hidden');
         }
 
-        // 5. แสดงผล UI
-        function renderApp() {
-            document.getElementById('book-grid').innerHTML = BOOKS.map(b => `
-                <div class="glass p-6 rounded-3xl shadow-md text-center">
-                    <div class="text-4xl mb-3">${b.icon}</div>
-                    <h3 class="font-bold text-lg">${b.title}</h3>
-                    <p class="text-gray-500 text-xs mb-4">${b.desc}</p>
-                    <button onclick="updatePoints(${b.pts}, '📖 อ่านจบแล้ว รับ +${b.pts} แต้ม')" class="w-full bg-purple-100 text-purple-600 font-bold py-2 rounded-xl hover:bg-purple-200 transition">อ่านสะสมแต้ม</button>
-                </div>
-            `).join('');
-
-            document.getElementById('reward-grid').innerHTML = REWARDS.map(r => `
-                <div class="glass p-6 rounded-3xl shadow-md flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="text-3xl">${r.icon}</div>
-                        <div>
-                            <h3 class="font-bold text-sm">${r.title}</h3>
-                            <p class="text-yellow-600 text-xs font-bold">ราคา ${r.cost} แต้ม</p>
-                        </div>
-                    </div>
-                    <button onclick="claimReward(${r.cost}, '${r.title}')" class="bg-pink-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md hover:bg-pink-600 transition">แลกเลย</button>
-                </div>
-            `).join('');
-        }
-
-        // 6. ระบบสมัคร/ล็อกอิน
-        async function handleRegister() {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('password').value;
-            try {
-                const res = await auth.createUserWithEmailAndPassword(e, p);
-                await db.ref('users/' + res.user.uid).set({ points: 0, email: e });
-                alert("สมัครสำเร็จ!");
-            } catch (err) { alert(err.message); }
-        }
+        function openInfo() { document.getElementById('info-modal').classList.remove('hidden'); }
+        function closeInfo() { document.getElementById('info-modal').classList.add('hidden'); }
 
         async function handleLogin() {
             const e = document.getElementById('email').value;
             const p = document.getElementById('password').value;
-            try { await auth.signInWithEmailAndPassword(e, p); } 
-            catch (err) { alert("อีเมลหรือรหัสผ่านผิดจ้า"); }
+            try { await auth.signInWithEmailAndPassword(e, p); } catch (err) { alert("ข้อมูลไม่ถูกต้อง"); }
+        }
+
+        async function handleRegister() {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            try {
+                const r = await auth.createUserWithEmailAndPassword(e, p);
+                await db.ref('users/' + r.user.uid).set({ points: 0, email: e });
+                alert("สมัครสำเร็จ!");
+            } catch (err) { alert(err.message); }
         }
     </script>
 </body>
