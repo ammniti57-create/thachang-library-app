@@ -1,276 +1,30 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V Lib Thachang - Smart Digital Library</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <style>
-        :root { --primary: #9333ea; --bg: #fdf2f8; --text: #1f2937; --card: rgba(255, 255, 255, 0.9); }
-        .dark { --bg: #111827; --text: #f3f4f6; --card: rgba(31, 41, 55, 0.9); }
-        body { font-family: 'Prompt', sans-serif; background-color: var(--bg); color: var(--text); transition: 0.3s; }
-        .glass { background: var(--card); backdrop-filter: blur(12px); border: 1px solid rgba(147, 51, 234, 0.2); }
-        .hidden { display: none; }
-        .back-btn { position: fixed; bottom: 20px; right: 20px; z-index: 100; }
-        .book-hover:hover { transform: scale(1.03); transition: 0.3s; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-    </style>
-</head>
-<body class="min-h-screen">
-
-    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
-        <div class="glass p-10 rounded-[3rem] shadow-2xl w-full max-w-md text-center border-b-8 border-purple-600">
-            <h1 class="text-4xl font-bold text-purple-600 mb-2">V Lib</h1>
-            <p class="opacity-70 mb-8 italic">Thachang Public Library</p>
-            <input type="email" id="email" placeholder="อีเมล" class="w-full mb-4 p-4 rounded-2xl bg-gray-100 dark:bg-gray-800 outline-none border-none focus:ring-2 focus:ring-purple-400">
-            <input type="password" id="password" placeholder="รหัสผ่าน" class="w-full mb-6 p-4 rounded-2xl bg-gray-100 dark:bg-gray-800 outline-none border-none focus:ring-2 focus:ring-purple-400">
-            <button onclick="handleLogin()" class="w-full bg-purple-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-purple-700 transition">เข้าสู่ระบบ</button>
-            <button onclick="handleRegister()" class="mt-4 text-purple-500 text-sm">ยังไม่มีบัญชี? สมัครสมาชิกที่นี่</button>
+<div id="landing-page" class="min-h-screen bg-gradient-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div class="max-w-4xl mx-auto p-6 py-12 text-center">
+        <div class="mb-8 animate-bounce">
+            <span class="text-7xl">🌾</span>
         </div>
-    </div>
+        <h1 class="text-4xl md:text-5xl font-bold text-purple-600 mb-6">กาลครั้งหนึ่ง... ณ ท่าฉาง</h1>
+        
+        <div class="glass p-8 rounded-[3rem] shadow-xl text-left mb-10 leading-relaxed border-l-8 border-purple-500">
+            <p class="text-xl mb-6 text-purple-700 dark:text-purple-400 font-bold">✨ ตอนที่ 1: สายน้ำแห่งชีวิต</p>
+            <p class="mb-4">นานมาแล้ว ณ ริมฝั่ง <b>แม่น้ำพุมดวง</b> สายน้ำที่เปรียบเสมือนเส้นเลือดใหญ่ ชาวบ้านใช้ชีวิตอย่างสงบสุข ปลูกข้าวเม็ดสวยเหลืองทองเต็มทุ่งนา ความอุดมสมบูรณ์นี้เลื่องลือไปไกลจนถึงพระนคร...</p>
+            
+            <p class="text-xl mb-6 text-purple-700 dark:text-purple-400 font-bold">✨ ตอนที่ 2: ที่มาของชื่อ "ท่าฉาง"</p>
+            <p class="mb-4">เมื่อข้าวมีมาก รัฐบาลจึงต้องสร้าง <b>"ฉางข้าวหลวง"</b> ขนาดมหึมาไว้ริมน้ำ เพื่อรวบรวมข้าวเปลือกส่งส่วยเข้าเมืองหลวง เรือสำเภาลำแล้วลำเล่ามาจอดเทียบท่าเพื่อขนข้าว จนชาวบ้านเรียกติดปากกันว่า <b>"ท่าของฉางข้าว"</b> และกลายเป็น <b>"อำเภอท่าฉาง"</b> ในที่สุด!</p>
 
-    <div id="main-screen" class="hidden">
-        <nav class="glass sticky top-0 z-50 p-4 shadow-md flex justify-between items-center px-6">
-            <div class="flex items-center gap-3">
-                <span class="text-2xl">🏛️</span>
-                <h2 class="font-bold text-purple-600 text-xl hidden md:block">V Lib Thachang</h2>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">🌓</button>
-                <div id="points-display" class="bg-yellow-400 text-white px-4 py-1.5 rounded-full font-bold shadow-sm">🪙 0</div>
-                <button onclick="auth.signOut()" class="bg-red-500 text-white px-3 py-1.5 rounded-lg text-sm">ออก</button>
-            </div>
-        </nav>
-
-        <main class="max-w-6xl mx-auto p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                <div onclick="showSection('game')" class="bg-gradient-to-br from-purple-600 to-pink-500 p-8 rounded-[2.5rem] text-white cursor-pointer hover:shadow-2xl transition">
-                    <h2 class="text-3xl font-bold mb-2">เล่นเกมสะสมแต้ม 🎮</h2>
-                    <p class="opacity-80">ท้าทายความรู้ท่าฉาง รับ 50 แต้ม</p>
-                </div>
-                <div onclick="showSection('library')" class="bg-gradient-to-br from-blue-500 to-cyan-400 p-8 rounded-[2.5rem] text-white cursor-pointer hover:shadow-2xl transition">
-                    <h2 class="text-3xl font-bold mb-2">เข้าสู่ห้องสมุด 📖</h2>
-                    <p class="opacity-80">นิทาน วรรณคดี และความรู้ท้องถิ่น</p>
-                </div>
-            </div>
-
-            <div class="glass p-8 rounded-[2.5rem] mb-10">
-                <h2 class="text-2xl font-bold mb-6">🎁 แลกของรางวัล (แจ้งเตือนผ่าน Email)</h2>
-                <div id="reward-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
-            </div>
-        </main>
-    </div>
-
-    <div id="library-section" class="hidden min-h-screen p-6">
-        <h1 class="text-3xl font-bold mb-8 text-center">📚 คลังหนังสือ V Lib</h1>
-        <div id="book-categories" class="flex gap-2 overflow-x-auto mb-8 pb-2">
-            <button class="bg-purple-600 text-white px-6 py-2 rounded-full whitespace-nowrap">ทั้งหมด</button>
-            <button class="glass px-6 py-2 rounded-full whitespace-nowrap">นิทาน</button>
-            <button class="glass px-6 py-2 rounded-full whitespace-nowrap">ความรู้ทั่วไป</button>
+            <p class="text-xl mb-6 text-purple-700 dark:text-purple-400 font-bold">✨ ตอนที่ 3: จากอดีตสู่สมาร์ทซิตี้</p>
+            <p class="mb-4">วันนี้ฉางข้าวไม้โบราณอาจเลือนหายไปตามกาลเวลา แต่จิตวิญญาณแห่งการเรียนรู้ยังคงอยู่ ท่าฉางเติบโตขึ้นพร้อมเทคโนโลยี และ <b>V Lib</b> แห่งนี้ คือฉางข้าวใบใหม่ที่เก็บรวบรวม "ความรู้" ไว้ให้ลูกหลานสืบไป...</p>
         </div>
-        <div id="book-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+
+        <button onclick="showLogin()" class="bg-purple-600 text-white px-10 py-4 rounded-full text-xl font-bold shadow-2xl hover:bg-purple-700 transition transform hover:scale-105">
+            เริ่มต้นการเรียนรู้ 🚀
+        </button>
+    </div>
+</div>
+
+<div id="login-screen" class="hidden min-h-screen flex items-center justify-center p-4">
     </div>
 
-    <div id="game-section" class="hidden min-h-screen flex items-center justify-center p-6">
-        <div class="glass w-full max-w-xl p-10 rounded-[3.5rem] text-center shadow-2xl">
-            <div id="quiz-ui">
-                <p id="q-count" class="text-purple-600 font-bold mb-4 text-xl">ข้อที่ 1/10</p>
-                <h2 id="q-text" class="text-2xl font-bold mb-8">คำถามกำลังโหลด...</h2>
-                <div id="q-options" class="grid grid-cols-1 gap-4"></div>
-            </div>
-        </div>
-    </div>
-
-    <button id="back-home" onclick="goHome()" class="hidden back-btn bg-white dark:bg-gray-800 p-4 rounded-full shadow-2xl border-2 border-purple-500 text-2xl">🏠</button>
-
-    <div id="content-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80">
-        <div class="glass w-full max-w-2xl max-h-[85vh] overflow-y-auto p-10 rounded-[3rem] shadow-2xl relative">
-            <button onclick="closeModal()" class="absolute top-6 right-8 text-3xl">&times;</button>
-            <div id="modal-body" class="prose prose-purple dark:prose-invert max-w-none"></div>
-            <button id="claim-btn" class="w-full mt-8 bg-green-500 text-white font-bold py-4 rounded-2xl shadow-lg">ยืนยันการอ่าน รับแต้ม</button>
-        </div>
-    </div>
-
-    <script>
-        // --- 1. CONFIG & INITIALIZATION ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyAR2-lI9YULz5J0OZNBcKk_oJYtJANX8XA",
-            authDomain: "thachang-library.firebaseapp.com",
-            databaseURL: "https://thachang-library-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "thachang-library",
-            storageBucket: "thachang-library.firebasestorage.app",
-            messagingSenderId: "172018694224",
-            appId: "1:172018694224:web:e1c58a5836f849496db955"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
-        emailjs.init("YOUR_PUBLIC_KEY"); // ต้องสมัคร EmailJS และใส่ Key ที่นี่เพื่อส่งเมลฟรี
-
-        // --- 2. DATA (BOOKS & QUIZ) ---
-        const BOOKS = [
-            { id:1, title:"ตำนานฉางข้าวหลวง", cat:"ประวัติศาสตร์", pts:40, icon:"🏛️", text:"เนื้อหาโดยละเอียดเกี่ยวกับฉางข้าว..." },
-            { id:2, title:"แม่น้ำพุมดวง", cat:"ภูมิศาสตร์", pts:35, icon:"🌊", text:"สายน้ำแห่งชีวิต..." },
-            { id:3, title:"กะปิท่าฉาง GI", cat:"ภูมิปัญญา", pts:45, icon:"🦐", text:"ขั้นตอนการทำกะปิ..." },
-            { id:4, title:"วัดเขาพระ", cat:"ศาสนา", pts:30, icon:"🛕", text:"รอยพระพุทธบาท..." },
-            { id:5, title:"มโนราห์ท่าฉาง", cat:"ศิลปะ", pts:50, icon:"🎭", text:"มรดกโลก UNESCO..." },
-            { id:6, title:"กระต่ายกับเต่า", cat:"นิทาน", pts:10, icon:"🐢", text:"นิทานสอนใจเรื่องความประมาท..." },
-            { id:7, title:"สังข์ทอง", cat:"วรรณคดี", pts:20, icon:"🐚", text:"วรรณคดีไทยชื่อดัง..." },
-            { id:8, title:"รอบรู้โลกกว้าง", cat:"ความรู้ทั่วไป", pts:15, icon:"🌍", text:"ความรู้เกี่ยวกับวิทยาศาตร์เบื้องต้น..." }
-        ];
-
-        const REWARDS = [
-            { name: "ปากกา V Lib", pts: 100, icon: "🖋️" },
-            { name: "คูปองเครื่องดื่ม", pts: 250, icon: "🥤" },
-            { name: "ตุ๊กตามาสคอต", pts: 800, icon: "🧸" }
-        ];
-
-        const QUESTIONS = [
-            { q: "ชื่อท่าฉางมาจาก?", a: ["ฉางข้าว", "ท่าเรือ"], c: 0 },
-            { q: "แม่น้ำหลักคือ?", a: ["พุมดวง", "ตาปี"], c: 0 },
-            { q: "กะปิทำจาก?", a: ["ตัวเคย", "กุ้ง"], c: 0 },
-            { q: "วัดสำคัญคือ?", a: ["วัดเขาพระ", "วัดบางใบไม้"], c: 0 },
-            { q: "มโนราห์เป็นศิลปะภาคใด?", a: ["ใต้", "เหนือ"], c: 0 },
-            { q: "กะปิท่าฉางได้ตรา?", a: ["GI", "ISO"], c: 0 },
-            { q: "ฉางข้าวหลวงอยู่ติด?", a: ["แม่น้ำ", "ภูเขา"], c: 0 },
-            { q: "ตัวเคยอยู่ในน้ำชนิดใด?", a: ["น้ำกร่อย", "น้ำเค็ม"], c: 0 },
-            { q: "V Lib ตั้งอยู่ในอำเภอ?", a: ["ท่าฉาง", "พุนพิน"], c: 0 },
-            { q: "สีประจำแอป V Lib?", a: ["ม่วง", "เขียว"], c: 0 }
-        ];
-
-        // --- 3. CORE LOGIC ---
-        let curQ = 0, score = 0;
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('main-screen').classList.remove('hidden');
-                db.ref('users/' + user.uid).on('value', s => {
-                    document.getElementById('points-display').innerText = `🪙 ${s.val()?.points || 0}`;
-                });
-                renderLibrary();
-                renderRewards();
-            } else {
-                document.getElementById('login-screen').classList.remove('hidden');
-                document.getElementById('main-screen').classList.add('hidden');
-            }
-        });
-
-        function showSection(name) {
-            document.getElementById('main-screen').classList.add('hidden');
-            document.getElementById('back-home').classList.remove('hidden');
-            if(name === 'game') {
-                document.getElementById('game-section').classList.remove('hidden');
-                startQuiz();
-            } else {
-                document.getElementById('library-section').classList.remove('hidden');
-            }
-        }
-
-        function goHome() {
-            document.getElementById('main-screen').classList.remove('hidden');
-            document.getElementById('game-section').classList.add('hidden');
-            document.getElementById('library-section').classList.add('hidden');
-            document.getElementById('back-home').classList.add('hidden');
-        }
-
-        function toggleDarkMode() { document.body.classList.toggle('dark'); }
-
-        function renderLibrary() {
-            document.getElementById('book-grid').innerHTML = BOOKS.map(b => `
-                <div class="glass p-6 rounded-[2rem] book-hover cursor-pointer" onclick="openBook(${b.id})">
-                    <div class="text-5xl mb-4">${b.icon}</div>
-                    <span class="text-xs font-bold text-purple-500">${b.cat}</span>
-                    <h3 class="text-lg font-bold">${b.title}</h3>
-                    <p class="text-sm opacity-60">+${b.pts} แต้ม</p>
-                </div>
-            `).join('');
-        }
-
-        function renderRewards() {
-            document.getElementById('reward-grid').innerHTML = REWARDS.map(r => `
-                <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-2xl text-center">
-                    <div class="text-3xl">${r.icon}</div>
-                    <div class="text-xs font-bold my-1">${r.name}</div>
-                    <button onclick="redeem('${r.name}', ${r.pts})" class="bg-purple-600 text-white text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-wider">${r.pts} PTS</button>
-                </div>
-            `).join('');
-        }
-
-        // --- 4. REDEEM & NOTIFICATION ---
-        async function redeem(item, cost) {
-            const user = auth.currentUser;
-            const snap = await db.ref('users/' + user.uid + '/points').get();
-            const currentPoints = snap.val() || 0;
-
-            if (currentPoints >= cost) {
-                if(confirm(`ยืนยันการแลก ${item}? (ระบบจะแจ้งเตือนไปยังห้องสมุดผ่านอีเมล)`)) {
-                    await db.ref('users/' + user.uid + '/points').set(currentPoints - cost);
-                    
-                    // ส่วนส่งแจ้งเตือน (จำลองการส่งข้อมูลไปที่ Email thachang.publiclib@gmail.com)
-                    console.log(`ส่งข้อมูลไปยัง thachang.publiclib@gmail.com: ผู้ใช้ ${user.email} แลก ${item}`);
-                    alert("✅ แลกสำเร็จ! เจ้าหน้าที่จะตรวจสอบข้อมูลและติดต่อกลับผ่านอีเมลของคุณครับ");
-                }
-            } else {
-                alert("❌ แต้มไม่พอครับ สะสมเพิ่มอีกนิดนะ!");
-            }
-        }
-
-        // --- 5. QUIZ LOGIC ---
-        function startQuiz() {
-            curQ = 0; score = 0;
-            showQ();
-        }
-
-        function showQ() {
-            const q = QUESTIONS[curQ];
-            document.getElementById('q-count').innerText = `ข้อที่ ${curQ + 1}/10`;
-            document.getElementById('q-text').innerText = q.q;
-            document.getElementById('q-options').innerHTML = q.a.map((o, i) => `
-                <button onclick="ans(${i})" class="w-full glass py-4 rounded-2xl font-bold hover:bg-purple-600 hover:text-white transition shadow-sm text-lg">${o}</button>
-            `).join('');
-        }
-
-        function ans(i) {
-            if (i === QUESTIONS[curQ].c) score++;
-            curQ++;
-            if (curQ < 10) showQ();
-            else {
-                if (score === 10) {
-                    db.ref('users/' + auth.currentUser.uid + '/points').transaction(p => (p || 0) + 50);
-                    alert("🏆 ชนะเลิศ! คุณคือแฟนพันธุ์แท้ รับ 50 แต้ม!");
-                } else alert(`จบเกม! คุณได้คะแนน ${score}/10`);
-                goHome();
-            }
-        }
-
-        // --- 6. AUTH & MODAL ---
-        function openBook(id) {
-            const b = BOOKS.find(x => x.id === id);
-            document.getElementById('modal-body').innerHTML = `<h2>${b.title}</h2><p>${b.text}</p>`;
-            document.getElementById('claim-btn').onclick = () => {
-                db.ref('users/' + auth.currentUser.uid + '/points').transaction(p => (p || 0) + b.pts);
-                alert(`ได้รับ +${b.pts} แต้ม!`);
-                closeModal();
-            };
-            document.getElementById('content-modal').classList.remove('hidden');
-        }
-
-        function closeModal() { document.getElementById('content-modal').classList.add('hidden'); }
-        async function handleLogin() {
-            try { await auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value); } catch(e) { alert("ข้อมูลผิดพลาด"); }
-        }
-        async function handleRegister() {
-            try {
-                const r = await auth.createUserWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value);
-                await db.ref('users/' + r.user.uid).set({ points: 0 });
-                alert("สมัครสำเร็จ!");
-            } catch(e) { alert(e.message); }
-        }
-    </script>
-</body>
-</html>
+<script>
+    // ฟังก์ชันสลับหน้า
+    function showLogin() {
